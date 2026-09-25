@@ -1,5 +1,5 @@
 """
-referentiel.py — Référentiel des notions et de leurs compétences
+referentiel — Référentiel des notions et de leurs compétences
 
 Sans dépendance au client LLM, pour que le seed puisse le lire sans clé.
 """
