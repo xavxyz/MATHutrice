@@ -24,7 +24,7 @@ uv run python -m mathutrice.fonctions_python.seed
 uv run uvicorn mathutrice.app:app --port 8000
 ```
 
-The seed step inserts the notions and competences of the referentiel. Modules and training need them. Running it again only adds what is missing.
+The seed step inserts the notions and competences of the referentiel. Modules and training need them. Running it again brings an existing database in line with the referentiel, keeping existing identifiers.
 
 Then open <http://localhost:8000/>. The other values in `.env.example` work as they are for a local clone. That file also lists and explains every variable the application reads. The application fails to start if a required one is missing.
 

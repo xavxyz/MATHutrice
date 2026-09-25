@@ -1,11 +1,12 @@
 """
-seed.py — Insère les notions et les compétences du référentiel en BDD
+seed.py — Aligne les notions et les compétences de la BDD sur le référentiel
 
 Usage :
   python -m mathutrice.fonctions_python.seed
 
 Idempotent : une notion est retrouvée par sa referentiel_key, une compétence
-par son referentiel_code ; seules les lignes absentes sont insérées.
+par son referentiel_code. Les lignes absentes sont insérées, les autres mises
+à jour (titre, description, niveau, notion) en gardant leur identifiant.
 """
 
 from uuid import uuid4
@@ -42,7 +43,7 @@ DESCRIPTIONS = {
 
 
 def seed(session: Session) -> None:
-    """Insère les notions et compétences du REFERENTIEL absentes de la BDD."""
+    """Aligne les notions et compétences de la BDD sur le REFERENTIEL."""
     for referentiel_key, notion_data in REFERENTIEL.items():
         notion = session.exec(
             select(models.Notion).where(
@@ -51,29 +52,26 @@ def seed(session: Session) -> None:
         ).first()
         if not notion:
             notion = models.Notion(
-                notion_id=uuid4(),
-                referentiel_key=referentiel_key,
-                title=notion_data["notion_nom"],
-                description=DESCRIPTIONS[referentiel_key],
+                notion_id=uuid4(), referentiel_key=referentiel_key
             )
-            session.add(notion)
+        notion.title = notion_data["notion_nom"]
+        notion.description = DESCRIPTIONS[referentiel_key]
+        session.add(notion)
 
         for comp in notion_data["competences"]:
-            existing = session.exec(
+            competence = session.exec(
                 select(models.Competence).where(
                     models.Competence.referentiel_code == comp["code"]
                 )
             ).first()
-            if not existing:
-                session.add(
-                    models.Competence(
-                        competence_id=uuid4(),
-                        referentiel_code=comp["code"],
-                        title=comp["nom"],
-                        level=comp["niveau"],
-                        notion_id=notion.notion_id,
-                    )
+            if not competence:
+                competence = models.Competence(
+                    competence_id=uuid4(), referentiel_code=comp["code"]
                 )
+            competence.title = comp["nom"]
+            competence.level = comp["niveau"]
+            competence.notion_id = notion.notion_id
+            session.add(competence)
     session.commit()
 
 
@@ -85,4 +83,4 @@ if __name__ == "__main__":
 
     with Session(engine) as session:
         seed(session)
-    print("Notions et compétences insérées.")
+    print("Notions et compétences à jour.")
