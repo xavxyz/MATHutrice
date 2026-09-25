@@ -23,7 +23,7 @@ from mathutrice.fonctions_python.main import (
     generate_mixed_test,
     generate_exercise_randomly,
 )
-from mathutrice.fonctions_python.referentiel import REFERENTIEL
+from mathutrice.referentiel import REFERENTIEL
 
 
 

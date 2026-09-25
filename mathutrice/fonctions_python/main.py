@@ -32,7 +32,7 @@ from mathutrice.fonctions_python.type_questions.steps_generator import (
     ask_exercice as ask_sbs_exercice,
 )
 from mathutrice.fonctions_python.base_generator import choisir_competence, update_scores
-from mathutrice.fonctions_python.referentiel import REFERENTIEL
+from mathutrice.referentiel import REFERENTIEL
 
 # ─── NOTIONS DISPONIBLES ──────────────────────────────────────────────────────
 

@@ -14,7 +14,7 @@ from uuid import uuid4
 from sqlmodel import Session, SQLModel, select
 
 from mathutrice import models
-from mathutrice.fonctions_python.referentiel import REFERENTIEL
+from mathutrice.referentiel import REFERENTIEL
 
 # Description de chaque notion, par referentiel_key : le reste vient du REFERENTIEL.
 DESCRIPTIONS = {
