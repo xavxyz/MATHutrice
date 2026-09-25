@@ -20,8 +20,11 @@ In short, from a clone of the `course-2026` branch:
 ```sh
 uv sync
 cp .env.example .env    # then set LLM_API_KEY in .env
+uv run python -m mathutrice.fonctions_python.seed
 uv run uvicorn mathutrice.app:app --port 8000
 ```
+
+The seed step inserts the notions and competences of the referentiel. Modules and training need them. Running it again only adds what is missing.
 
 Then open <http://localhost:8000/>. The other values in `.env.example` work as they are for a local clone. That file also lists and explains every variable the application reads. The application fails to start if a required one is missing.
 
@@ -84,6 +87,12 @@ Before a deployment is reachable by real users:
 ## Development
 
 Package boundaries are machine-checked. Read [`mathutrice/README.md`](mathutrice/README.md), which also gives the commands that run the check, before adding a package or importing across one.
+
+Run the tests with:
+
+```sh
+uv run pytest
+```
 
 ## License
 

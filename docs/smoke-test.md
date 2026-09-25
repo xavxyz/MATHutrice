@@ -12,6 +12,7 @@ cd mathutrice
 uv sync
 . .venv/bin/activate
 cp .env.example .env
+python -m mathutrice.fonctions_python.seed
 ```
 
 If `uv sync` reports `No interpreter found for Python 3.14.7`, your uv predates that Python release: run `uv self update`, then `uv sync` again.
@@ -37,8 +38,7 @@ The application must refuse to start when a required setting is missing: with `L
 1. Open <http://localhost:8000/>. You are redirected to `/dev/login`, and a red dev-mode banner shows on every page.
 2. Sign in as a Student with an address ending in `@epfedu.fr`. You land on the home page.
 3. Open the chat and ask a question. The answer appears word by word (streaming).
-
-Modules and training need seeded notions, which a fresh database does not have yet (#20).
+4. Open a module from the home page. Its competences are listed, as seeded in step 1.
 
 Step 3 calls the **LLM endpoint**. An `Erreur: ...` message in the chat means the endpoint, key or model in `.env` is wrong.
 

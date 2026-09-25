@@ -1,11 +1,22 @@
-from mathutrice.database import engine
-from sqlmodel import Session, SQLModel
+"""
+seed.py — Insère les notions et les compétences du référentiel en BDD
+
+Usage :
+  python -m mathutrice.fonctions_python.seed
+
+Idempotent : une notion est retrouvée par sa referentiel_key, une compétence
+par son referentiel_code ; seules les lignes absentes sont insérées.
+"""
+
+from uuid import uuid4
+
+from sqlmodel import Session, SQLModel, select
+
 from mathutrice import models
+from mathutrice.fonctions_python.referentiel import REFERENTIEL
 
-# Crée toutes les tables
-SQLModel.metadata.create_all(engine)
-
-notions = [
+# (referentiel_key, titre, description)
+NOTIONS = [
     (
         "trigonometrie",
         "Trigonométrie",
@@ -43,15 +54,48 @@ notions = [
     ),
 ]
 
-with Session(engine) as session:
-    for notion_id, title, description in notions:
-        existing = session.get(models.Notion, notion_id)
-        if not existing:
+
+def seed(session: Session) -> None:
+    for referentiel_key, title, description in NOTIONS:
+        notion = session.exec(
+            select(models.Notion).where(
+                models.Notion.referentiel_key == referentiel_key
+            )
+        ).first()
+        if not notion:
             notion = models.Notion(
-                notion_id=notion_id,
+                notion_id=uuid4(),
+                referentiel_key=referentiel_key,
                 title=title,
                 description=description,
             )
             session.add(notion)
+
+        for comp in REFERENTIEL[referentiel_key]["competences"]:
+            existing = session.exec(
+                select(models.Competence).where(
+                    models.Competence.referentiel_code == comp["code"]
+                )
+            ).first()
+            if not existing:
+                session.add(
+                    models.Competence(
+                        competence_id=uuid4(),
+                        referentiel_code=comp["code"],
+                        title=comp["nom"],
+                        level=comp["niveau"],
+                        notion_id=notion.notion_id,
+                    )
+                )
     session.commit()
-    print("Notions insérées.")
+
+
+if __name__ == "__main__":
+    from mathutrice.database import engine
+
+    # Crée toutes les tables
+    SQLModel.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        seed(session)
+    print("Notions et compétences insérées.")
