@@ -85,6 +85,11 @@ def cleanup_old_conversations():
 async def lifespan(app: FastAPI):
     create_db_and_tables()
 
+    with DBSession(engine) as session:
+        seed(session)
+        if AUTH_MODE == "dev":
+            seed_dev_users(session)
+
     scheduler = BackgroundScheduler()
     scheduler.add_job(cleanup_old_conversations, "interval", hours=1)
     scheduler.start()
@@ -142,6 +147,7 @@ from mathutrice.fonctions_python.chatbot import (  # noqa: E402
 )
 from mathutrice.fonctions_python.main import generate_mixed_test  # noqa: E402
 from mathutrice.referentiel import REFERENTIEL  # noqa: E402
+from mathutrice.fonctions_python.seed import seed, seed_dev_users  # noqa: E402
 from mathutrice.fonctions_python.session_generator import (  # noqa: E402
     build_notion_data_with_scores,
     generate_next_question,

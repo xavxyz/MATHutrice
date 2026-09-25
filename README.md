@@ -20,11 +20,10 @@ In short, from a clone of the `course-2026` branch:
 ```sh
 uv sync
 cp .env.example .env    # then set LLM_API_KEY in .env
-uv run python -m mathutrice.fonctions_python.seed
 uv run uvicorn mathutrice.app:app --port 8000
 ```
 
-The seed step inserts the notions and competences of the referentiel. Modules and training need them. Running it again brings an existing database in line with the referentiel, keeping existing identifiers.
+At startup, the application seeds the database: it inserts the notions and competences of the referentiel, which modules and training need, and brings an existing database in line with the referentiel, keeping existing identifiers. With `AUTH_MODE=dev`, it also creates one user per role (Student, Teacher, Admin) if they are missing, so `/dev/login` lists ready-made users to sign in as. Signing in as any other address still works.
 
 Then open <http://localhost:8000/>. The other values in `.env.example` work as they are for a local clone. That file also lists and explains every variable the application reads. The application fails to start if a required one is missing.
 

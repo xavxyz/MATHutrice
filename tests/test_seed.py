@@ -5,7 +5,7 @@ from sqlmodel import Session, SQLModel, create_engine, select
 
 from mathutrice import models
 from mathutrice.referentiel import REFERENTIEL
-from mathutrice.fonctions_python.seed import DESCRIPTIONS, seed
+from mathutrice.fonctions_python.seed import DESCRIPTIONS, seed, seed_dev_users
 
 
 @pytest.fixture
@@ -89,3 +89,30 @@ def test_reseeding_updates_notions_and_competences_to_the_referentiel(session):
     assert competence.title == expected["nom"]
     assert competence.level == expected["niveau"]
     assert competence.notion_id == notion_id
+
+
+def test_seeds_one_dev_user_per_role(session):
+    seed_dev_users(session)
+
+    users = session.exec(select(models.User)).all()
+
+    assert sorted(u.role for u in users) == ["Admin", "Student", "Teacher"]
+    assert all(u.email.endswith(("@epfedu.fr", "@epf.fr")) for u in users)
+    assert all(isinstance(u.sso_id, UUID) for u in users)
+
+
+def test_reseeding_dev_users_keeps_existing_users(session):
+    seed_dev_users(session)
+    student = session.exec(
+        select(models.User).where(models.User.role == "Student")
+    ).one()
+    sso_id = student.sso_id
+    student.role = "Teacher"
+    session.commit()
+
+    seed_dev_users(session)
+
+    session.refresh(student)
+    assert len(session.exec(select(models.User)).all()) == 3
+    assert student.sso_id == sso_id
+    assert student.role == "Teacher"
