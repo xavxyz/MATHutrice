@@ -15,7 +15,15 @@ You need:
 
 No Microsoft Entra credentials and no database server are needed: a local clone signs in with the **connexion de développement** and stores its data in a SQLite file.
 
-In short: clone the `course-2026` branch, install the dependencies with `uv sync`, copy `.env.example` to `.env` and set `LLM_API_KEY` in it, then start the `mathutrice.app:app` application with `uvicorn` from the repository root. The other values in `.env.example` work as they are for a local clone. That file also lists and explains every variable the application reads. The application fails to start if a required one is missing.
+In short, from a clone of the `course-2026` branch:
+
+```sh
+uv sync
+cp .env.example .env    # then set LLM_API_KEY in .env
+uv run uvicorn mathutrice.app:app --port 8000
+```
+
+Then open <http://localhost:8000/>. The other values in `.env.example` work as they are for a local clone. That file also lists and explains every variable the application reads. The application fails to start if a required one is missing.
 
 The [smoke test](docs/smoke-test.md) gives the exact commands, what to expect at each step, and how to check that the clone works end to end. Follow it for a first run.
 
