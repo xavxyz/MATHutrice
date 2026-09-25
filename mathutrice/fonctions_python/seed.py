@@ -15,48 +15,35 @@ from sqlmodel import Session, SQLModel, select
 from mathutrice import models
 from mathutrice.fonctions_python.referentiel import REFERENTIEL
 
-# (referentiel_key, titre, description)
-NOTIONS = [
-    (
-        "trigonometrie",
-        "Trigonométrie",
-        "Étude des fonctions trigonométriques, des angles et du cercle trigonométrique.",
+# Description de chaque notion, par referentiel_key : le reste vient du REFERENTIEL.
+DESCRIPTIONS = {
+    "trigonometrie": (
+        "Étude des fonctions trigonométriques, des angles et du cercle trigonométrique."
     ),
-    (
-        "fractions_puissances_radicaux",
-        "Fractions – Puissances – Radicaux",
-        "Manipulation des fractions, puissances et radicaux.",
+    "fractions_puissances_radicaux": (
+        "Manipulation des fractions, puissances et radicaux."
     ),
-    (
-        "logarithme_exponentielle",
-        "Logarithme et exponentielle",
-        "Étude des fonctions logarithme et exponentielle.",
+    "logarithme_exponentielle": (
+        "Étude des fonctions logarithme et exponentielle."
     ),
-    (
-        "manipulation_expressions_litterales",
-        "Manipulation d'expressions littérales",
-        "Isolement et manipulation de variables dans des expressions algébriques.",
+    "manipulation_expressions_litterales": (
+        "Isolement et manipulation de variables dans des expressions algébriques."
     ),
-    (
-        "equations_inequations",
-        "Équations – Inéquations",
-        "Résolution d'équations et d'inéquations du premier et second degré.",
+    "equations_inequations": (
+        "Résolution d'équations et d'inéquations du premier et second degré."
     ),
-    (
-        "polynomes_factorisation",
-        "Polynômes – Factorisation",
-        "Étude des polynômes, factorisation et identités remarquables.",
+    "polynomes_factorisation": (
+        "Étude des polynômes, factorisation et identités remarquables."
     ),
-    (
-        "analyse_dimensionnelle",
-        "Analyse dimensionnelle",
-        "Dimensions, unités et homogénéité des formules physiques.",
+    "analyse_dimensionnelle": (
+        "Dimensions, unités et homogénéité des formules physiques."
     ),
-]
+}
 
 
 def seed(session: Session) -> None:
-    for referentiel_key, title, description in NOTIONS:
+    """Insère les notions et compétences du REFERENTIEL absentes de la BDD."""
+    for referentiel_key, notion_data in REFERENTIEL.items():
         notion = session.exec(
             select(models.Notion).where(
                 models.Notion.referentiel_key == referentiel_key
@@ -66,12 +53,12 @@ def seed(session: Session) -> None:
             notion = models.Notion(
                 notion_id=uuid4(),
                 referentiel_key=referentiel_key,
-                title=title,
-                description=description,
+                title=notion_data["notion_nom"],
+                description=DESCRIPTIONS[referentiel_key],
             )
             session.add(notion)
 
-        for comp in REFERENTIEL[referentiel_key]["competences"]:
+        for comp in notion_data["competences"]:
             existing = session.exec(
                 select(models.Competence).where(
                     models.Competence.referentiel_code == comp["code"]

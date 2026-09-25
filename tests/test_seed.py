@@ -22,6 +22,8 @@ def test_seeds_one_notion_per_referentiel_key(session):
     notions = session.exec(select(models.Notion)).all()
 
     assert {n.referentiel_key for n in notions} == set(REFERENTIEL)
+    for n in notions:
+        assert n.title == REFERENTIEL[n.referentiel_key]["notion_nom"]
     assert all(isinstance(n.notion_id, UUID) for n in notions)
 
 
