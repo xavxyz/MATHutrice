@@ -4,7 +4,7 @@ LLM-based tutor that helps EPF first-year students practise mathematical tools t
 
 Students sign in, pick a notion (for example, trigonometry), see their progress on each competence, and train on exercises generated and corrected by an LLM. A chat answers their questions. Teachers upload course documents.
 
-The application is a FastAPI server with Jinja2 templates, in the `mathutrice` package. The vocabulary used here and in the code is defined in [`CONTEXT.md`](CONTEXT.md), and design decisions are recorded in [`docs/adr/`](docs/adr/).
+The application is a FastAPI server with Jinja2 templates, in the `mathutrice` package. The vocabulary used here and in the code is defined in [`GLOSSARY.md`](GLOSSARY.md), and design decisions are recorded in [`docs/adr/`](docs/adr/).
 
 ## Run it locally
 
